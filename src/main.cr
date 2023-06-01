@@ -6,7 +6,7 @@ require "./git-version"
 
 previous_version = false
 dev_branch = "dev"
-release_branch = "master"
+release_branch = "main"
 minor_identifier = "feature:"
 major_identifier = "breaking:"
 prefix = ""
