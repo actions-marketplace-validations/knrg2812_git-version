@@ -6,11 +6,11 @@ require "../src/git-version"
 
 include Utils
 describe GitVersion do
-  it "should get the correct version in master and dev branch" do
+  it "should get the correct version in main and dev branch" do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
       tmp.exec %(git init)
       tmp.exec %(git checkout -b #{git.release_branch})
@@ -24,9 +24,9 @@ describe GitVersion do
       tmp.exec %(git checkout -b dev)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "2")
 
-      tag_on_master = git.tags_by_branch("#{git.release_branch}")
+      tag_on_main = git.tags_by_branch("#{git.release_branch}")
 
-      tag_on_master.should eq(["1.0.0"])
+      tag_on_main.should eq(["1.0.0"])
 
       current_branch = git.current_branch_or_tag
 
@@ -52,14 +52,14 @@ describe GitVersion do
 
     begin
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
       tmp.exec %(git tag "1.0.0")
 
       tmp.exec %(git checkout -b my-fancy.branch)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "2")
 
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
       hash = git.current_commit_hash
 
@@ -76,13 +76,13 @@ describe GitVersion do
 
     begin
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
       tmp.exec %(git tag "1.0.0")
 
       tmp.exec %(git checkout -b dev)
 
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "breaking: XYZ")
 
@@ -112,14 +112,14 @@ describe GitVersion do
     end
   end
 
-  it "bump on master after merging in various ways" do
+  it "bump on main after merging in various ways" do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
       tmp.exec %(git tag "1.0.0")
 
@@ -128,7 +128,7 @@ describe GitVersion do
 
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "breaking: XYZ")
 
-      tmp.exec %(git checkout master)
+      tmp.exec %(git checkout main)
 
       version = git.get_new_version
 
@@ -144,7 +144,7 @@ describe GitVersion do
 
       tmp.exec %(git checkout -b my-fancy.branch2)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "breaking: ABC")
-      tmp.exec %(git checkout master)
+      tmp.exec %(git checkout main)
 
       version = git.get_new_version
 
@@ -160,7 +160,7 @@ describe GitVersion do
 
       tmp.exec %(git checkout -b my-fancy.branch3)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "feature: 123")
-      tmp.exec %(git checkout master)
+      tmp.exec %(git checkout main)
 
       version = git.get_new_version
 
@@ -180,10 +180,10 @@ describe GitVersion do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
       tmp.exec %(git tag "1.0.0")
 
@@ -205,14 +205,14 @@ describe GitVersion do
     end
   end
 
-  it "should retrieve correct first version on master" do
+  it "should retrieve correct first version on main" do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
 
       version = git.get_new_version
@@ -227,10 +227,10 @@ describe GitVersion do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "2")
       tmp.exec %(git tag "1.1.0")
@@ -251,10 +251,10 @@ describe GitVersion do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
       tmp.exec %(git tag "1.0.0")
       tmp.exec %(git checkout -b feature1)
@@ -263,14 +263,14 @@ describe GitVersion do
       version = git.get_new_version
       version.should eq("1.1.0-feature1.1.#{hash}")
 
-      tmp.exec %(git checkout master)
+      tmp.exec %(git checkout main)
       tmp.exec %(git checkout -b feature2)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "breaking: 3")
       hash = git.current_commit_hash
       version = git.get_new_version
       version.should eq("2.0.0-feature2.1.#{hash}")
 
-      tmp.exec %(git checkout master)
+      tmp.exec %(git checkout main)
       tmp.exec %(git merge feature2)
       version = git.get_new_version
       version.should eq("2.0.0")
@@ -282,7 +282,7 @@ describe GitVersion do
       version = git.get_new_version
       version.should eq("2.0.1-feature3.1.#{hash}")
 
-      tmp.exec %(git checkout master)
+      tmp.exec %(git checkout main)
       tmp.exec %(git merge --no-gpg-sign feature1)
       version = git.get_new_version
       version.should eq("2.1.0")
@@ -297,14 +297,14 @@ describe GitVersion do
     end
   end
 
-  it "version releases with rebase from master" do
+  it "version releases with rebase from main" do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
       tmp.exec %(git tag "1.0.0")
       tmp.exec %(git checkout -b dev)
@@ -318,7 +318,7 @@ describe GitVersion do
       tmp.exec %(git checkout dev)
       tmp.exec %(git merge myfeature)
 
-      tmp.exec %(git checkout master)
+      tmp.exec %(git checkout main)
       tmp.exec %(git rebase --no-gpg-sign dev)
       version = git.get_new_version
       version.should eq("1.0.1")
@@ -331,23 +331,23 @@ describe GitVersion do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
       tmp.exec %(git tag "1.0.0")
       tmp.exec %(git checkout -b dev)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "breaking: 2")
 
-      tmp.exec %(git checkout master)
+      tmp.exec %(git checkout main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "3")
 
       tmp.exec %(git checkout dev)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "4")
-      tmp.exec %(git rebase --no-gpg-sign master)
+      tmp.exec %(git rebase --no-gpg-sign main)
 
-      tmp.exec %(git checkout master)
+      tmp.exec %(git checkout main)
       tmp.exec %(git merge --no-gpg-sign --no-ff dev)
       # e.g. commit added when merging by bitbucket, no easy way to produce it automatically...
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "Merged xyz (123) breaking:")
@@ -359,14 +359,14 @@ describe GitVersion do
     end
   end
 
-  it "when in master should not consider pre-release versions for major bumps" do
+  it "when in main should not consider pre-release versions for major bumps" do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
       tmp.exec %(git tag "1.0.0")
       tmp.exec %(git checkout -b dev)
@@ -377,7 +377,7 @@ describe GitVersion do
       tmp.exec %(git tag "#{version}")
       version.should eq("2.0.0-SNAPSHOT.1.#{hash}")
 
-      tmp.exec %(git checkout master)
+      tmp.exec %(git checkout main)
       tmp.exec %(git merge --no-gpg-sign --no-ff dev)
 
       version = git.get_new_version
@@ -387,14 +387,14 @@ describe GitVersion do
     end
   end
 
-  it "when in master should not consider pre-release versions for minor bumps" do
+  it "when in main should not consider pre-release versions for minor bumps" do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
       tmp.exec %(git tag "1.0.0")
       tmp.exec %(git checkout -b dev)
@@ -405,7 +405,7 @@ describe GitVersion do
       tmp.exec %(git tag "#{version}")
       version.should eq("1.0.1-SNAPSHOT.1.#{hash}")
 
-      tmp.exec %(git checkout master)
+      tmp.exec %(git checkout main)
       tmp.exec %(git merge --no-gpg-sign --no-ff dev)
 
       version = git.get_new_version
@@ -419,10 +419,10 @@ describe GitVersion do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
       tmp.exec %(git tag "0.1.0")
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m ":breaking: 2")
@@ -438,10 +438,10 @@ describe GitVersion do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
       tmp.exec %(git tag "0.1.0")
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "feature: 2")
@@ -459,10 +459,10 @@ describe GitVersion do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "breaking: 1")
 
       version = git.get_new_version
@@ -476,10 +476,10 @@ describe GitVersion do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "breaking: 1")
       tmp.exec %(git tag v1)
       tmp.exec %(git checkout v1)
@@ -496,10 +496,10 @@ describe GitVersion do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir, "v")
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir, "v")
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "feature: 1")
       tmp.exec %(git tag "v1.1.0")
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "2")
@@ -515,10 +515,10 @@ describe GitVersion do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir, "v")
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir, "v")
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
       tmp.exec %(git tag "1.0.0")
 
@@ -533,10 +533,10 @@ describe GitVersion do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir, "v")
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir, "v")
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
       tmp.exec %(git tag "v")
 
@@ -551,10 +551,10 @@ describe GitVersion do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git checkout -b v1)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "breaking: 1")
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "breaking: 2")
@@ -572,10 +572,10 @@ describe GitVersion do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir, "", "dir2/")
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir, "", "dir2/")
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git checkout -b v1)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
       # Create dir1 and tag 1.0.0
@@ -601,10 +601,10 @@ describe GitVersion do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir, "", "dir1/ dir3/")
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir, "", "dir1/ dir3/")
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       # Create dir1 and tag 1.0.0
       base_dir = "dir1"
       tmp.exec %(mkdir #{base_dir} && touch #{base_dir}/dummy_file)
@@ -625,7 +625,7 @@ describe GitVersion do
       tmp.exec %(git add #{base_dir}/)
       tmp.exec %(git commit --no-gpg-sign -m "3")
 
-      tmp.exec %(git checkout master)
+      tmp.exec %(git checkout main)
       tmp.exec %(git merge --no-gpg-sign --no-ff dev)
 
       # git-version should ignore the breaking tag on commit with dir2
@@ -640,10 +640,10 @@ describe GitVersion do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir, "", "dir2/ dir3/")
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir, "", "dir2/ dir3/")
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       # Create dir1 and tag 1.0.0
       base_dir = "dir1"
       tmp.exec %(mkdir #{base_dir} && touch #{base_dir}/dummy_file)
@@ -663,7 +663,7 @@ describe GitVersion do
       tmp.exec %(git add #{base_dir}/)
       tmp.exec %(git commit --no-gpg-sign -m "3")
 
-      tmp.exec %(git checkout master)
+      tmp.exec %(git checkout main)
       tmp.exec %(git merge --no-gpg-sign --no-ff dev)
 
       # git-version should accept the breaking tag on commit with dir2
@@ -678,10 +678,10 @@ describe GitVersion do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir, "", "dir1/")
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir, "", "dir1/")
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
       tmp.exec %(git checkout -b v1)
       tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
       tmp.exec %(git tag "1.0.0")
@@ -702,10 +702,10 @@ describe GitVersion do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir, "dir2-", "dir2/ dir3/")
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir, "dir2-", "dir2/ dir3/")
 
       tmp.exec %(git init)
-      tmp.exec %(git checkout -b master)
+      tmp.exec %(git checkout -b main)
 
       # Create dir1 and tag dir1-1.0.0
       base_dir = "dir1"
@@ -741,7 +741,7 @@ describe GitVersion do
     tmp = InTmp.new
 
     begin
-      git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+      git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
       tmp.exec %(git init)
       tmp.exec %(git checkout -b very-very-very-very-long-branch-name-that-excedes-k8s-limits)
@@ -761,10 +761,10 @@ it "get previous version - first commit" do
   tmp = InTmp.new
 
   begin
-    git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir)
+    git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir)
 
     tmp.exec %(git init)
-    tmp.exec %(git checkout -b master)
+    tmp.exec %(git checkout -b main)
     tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
 
 
@@ -780,10 +780,10 @@ it "get previous version - first commit w/ prefix" do
   tmp = InTmp.new
 
   begin
-    git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir, "v")
+    git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir, "v")
 
     tmp.exec %(git init)
-    tmp.exec %(git checkout -b master)
+    tmp.exec %(git checkout -b main)
     tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
 
     # git-version should accept the breaking tag on commit with dir2
@@ -798,10 +798,10 @@ it "get previous version - pre-tagged" do
   tmp = InTmp.new
 
   begin
-    git = GitVersion::Git.new("dev", "master", "feature:", "breaking:", tmp.@tmpdir, "v")
+    git = GitVersion::Git.new("dev", "main", "feature:", "breaking:", tmp.@tmpdir, "v")
 
     tmp.exec %(git init)
-    tmp.exec %(git checkout -b master)
+    tmp.exec %(git checkout -b main)
     tmp.exec %(git commit --no-gpg-sign --allow-empty -m "1")
     tmp.exec %(git tag "v1.0.0")
 
